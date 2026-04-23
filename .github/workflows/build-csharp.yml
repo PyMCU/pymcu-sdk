@@ -1,0 +1,51 @@
+name: Build — C# NuGet package
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/csharp/**"
+      - "PyMCU.SDK.slnx"
+      - ".github/workflows/build-csharp.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "src/csharp/**"
+      - "PyMCU.SDK.slnx"
+      - ".github/workflows/build-csharp.yml"
+
+jobs:
+  build:
+    name: Build & pack NuGet
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Restore dependencies
+        run: dotnet restore src/csharp/PyMCU.Backend.SDK.csproj
+
+      - name: Build
+        run: dotnet build src/csharp/PyMCU.Backend.SDK.csproj -c Release --no-restore
+
+      - name: Pack
+        run: >
+          dotnet pack src/csharp/PyMCU.Backend.SDK.csproj
+          -c Release
+          --no-build
+          -o artifacts/
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: PyMCU.Backend.SDK-nupkg
+          path: artifacts/*.nupkg
+          if-no-files-found: error
+          retention-days: 30
+

@@ -1,0 +1,36 @@
+name: Build — Python wheel
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/python/**"
+      - "pyproject.toml"
+      - ".github/workflows/build-python.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "src/python/**"
+      - "pyproject.toml"
+      - ".github/workflows/build-python.yml"
+jobs:
+  build:
+    name: Build wheel & sdist
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install Hatch
+        run: pip install "hatch>=1.25.0"
+      - name: Build
+        run: hatch build
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: pymcu-plugin-sdk-dist
+          path: dist/
+          if-no-files-found: error
+          retention-days: 30

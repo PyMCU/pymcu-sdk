@@ -1,0 +1,136 @@
+# =============================================================================
+# PyMCU SDK — .gitignore
+# Languages: C# / .NET 10  +  Python 3.11+
+# IDEs: JetBrains Rider, Visual Studio, VS Code
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Python
+# -----------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+*.egg
+MANIFEST
+.eggs/
+
+# Hatch / Hatchling
+.hatch/
+*.whl
+*.tar.gz
+
+# Virtual environments
+.venv/
+venv/
+env/
+.env/
+ENV/
+
+# Testing & coverage
+.pytest_cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+.tox/
+.nox/
+
+# Type checkers
+.mypy_cache/
+.dmypy.json
+.pytype/
+.pyre/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# -----------------------------------------------------------------------------
+# C# / .NET
+# -----------------------------------------------------------------------------
+# Build output
+[Bb]in/
+[Oo]bj/
+artifacts/
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Visual Studio cache / options
+.vs/
+*.VC.db
+*.VC.opendb
+
+# Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+
+# NuGet packages
+*.nupkg
+*.snupkg
+*.nuget.props
+*.nuget.targets
+packages/
+!**/packages/build/
+project.lock.json
+project.fragment.lock.json
+
+# Publish profiles
+PublishProfiles/
+FolderProfile.pubxml
+
+# dotnet tools
+.dotnet/
+
+# Test results
+TestResults/
+[Tt]est[Rr]esult*/
+
+# -----------------------------------------------------------------------------
+# JetBrains Rider / IntelliJ
+# -----------------------------------------------------------------------------
+.idea/
+*.sln.iml
+
+# -----------------------------------------------------------------------------
+# Visual Studio Code
+# -----------------------------------------------------------------------------
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# -----------------------------------------------------------------------------
+# macOS
+# -----------------------------------------------------------------------------
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# -----------------------------------------------------------------------------
+# Miscellaneous
+# -----------------------------------------------------------------------------
+*.log
+*.tmp
+*.bak
+*.swp
+*.orig
+
