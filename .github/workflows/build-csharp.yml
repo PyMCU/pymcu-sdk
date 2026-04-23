@@ -7,6 +7,8 @@ on:
       - "src/csharp/**"
       - "PyMCU.SDK.slnx"
       - ".github/workflows/build-csharp.yml"
+    tags:
+      - "v*"
   pull_request:
     branches: [main]
     paths:
@@ -18,6 +20,8 @@ jobs:
   build:
     name: Build & pack NuGet
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     steps:
       - name: Checkout
@@ -49,3 +53,68 @@ jobs:
           if-no-files-found: error
           retention-days: 30
 
+  publish-private:
+    name: Publish to private NuGet feed
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref_type == 'branch'
+    permissions:
+      contents: read
+
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: PyMCU.Backend.SDK-nupkg
+          path: artifacts/
+
+      - name: Connect to headscale network
+        uses: tailscale/github-action@v3
+        with:
+          authkey: ${{ secrets.HEADSCALE_AUTH_KEY }}
+          login-server: ${{ secrets.HEADSCALE_URL }}
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Publish to private NuGet feed
+        env:
+          PRIVATE_NUGET_URL: ${{ secrets.PRIVATE_NUGET_URL }}
+          PRIVATE_NUGET_API_KEY: ${{ secrets.PRIVATE_NUGET_API_KEY }}
+        run: |
+          dotnet nuget push artifacts/*.nupkg \
+            --source "$PRIVATE_NUGET_URL" \
+            --api-key "$PRIVATE_NUGET_API_KEY" \
+            --skip-duplicate
+
+  publish-public:
+    name: Publish to NuGet.org
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref_type == 'tag'
+    environment: nuget
+    permissions:
+      contents: read
+
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: PyMCU.Backend.SDK-nupkg
+          path: artifacts/
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Publish to NuGet.org
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        run: |
+          dotnet nuget push artifacts/*.nupkg \
+            --source https://api.nuget.org/v3/index.json \
+            --api-key "$NUGET_API_KEY" \
+            --skip-duplicate

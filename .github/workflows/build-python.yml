@@ -6,16 +6,21 @@ on:
       - "src/python/**"
       - "pyproject.toml"
       - ".github/workflows/build-python.yml"
+    tags:
+      - "v*"
   pull_request:
     branches: [main]
     paths:
       - "src/python/**"
       - "pyproject.toml"
       - ".github/workflows/build-python.yml"
+
 jobs:
   build:
     name: Build wheel & sdist
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -34,3 +39,57 @@ jobs:
           path: dist/
           if-no-files-found: error
           retention-days: 30
+
+  publish-private:
+    name: Publish to private PyPI
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref_type == 'branch'
+    permissions:
+      contents: read
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: pymcu-plugin-sdk-dist
+          path: dist/
+
+      - name: Connect to headscale network
+        uses: tailscale/github-action@v3
+        with:
+          authkey: ${{ secrets.HEADSCALE_AUTH_KEY }}
+          login-server: ${{ secrets.HEADSCALE_URL }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Twine
+        run: pip install twine
+
+      - name: Publish to private registry
+        env:
+          TWINE_REPOSITORY_URL: ${{ secrets.PRIVATE_PYPI_URL }}
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PRIVATE_PYPI_TOKEN }}
+        run: twine upload dist/*
+
+  publish-public:
+    name: Publish to PyPI
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref_type == 'tag'
+    environment: pypi
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: pymcu-plugin-sdk-dist
+          path: dist/
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
