@@ -24,7 +24,7 @@ jobs:
         with:
           python-version: "3.11"
       - name: Install Hatch
-        run: pip install "hatch>=1.25.0"
+        run: pip install "hatch>=1.0.0"
       - name: Build
         run: hatch build
       - name: Upload artifacts
