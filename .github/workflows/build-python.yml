@@ -65,7 +65,7 @@ jobs:
         run: |
           uv publish \
             --publish-url "${{ secrets.PRIVATE_PYPI_URL }}" \
-            --username "__token__" \
+            --username "${{ secrets.PRIVATE_PYPI_USERNAME }}" \
             --password "${{ secrets.PRIVATE_PYPI_TOKEN }}"
 
   publish-public:
