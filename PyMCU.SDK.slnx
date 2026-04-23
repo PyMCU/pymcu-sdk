@@ -2,4 +2,7 @@
   <Folder Name="/src/">
     <Project Path="src/csharp/PyMCU.Backend.SDK.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/csharp/PyMCU.Backend.SDK.Tests.csproj" />
+  </Folder>
 </Solution>
