@@ -24,14 +24,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v6
         with:
           python-version: "3.11"
-      - name: Install Hatch
-        run: pip install "hatch>=1.0.0"
       - name: Build
-        run: hatch build
+        run: uv build
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -60,20 +58,15 @@ jobs:
           authkey: ${{ secrets.HEADSCALE_AUTH_KEY }}
           args: --login-server ${{ secrets.HEADSCALE_URL }}
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v6
 
-      - name: Install Twine
-        run: pip install twine
-
-      - name: Publish to private registry
-        env:
-          TWINE_REPOSITORY_URL: ${{ secrets.PRIVATE_PYPI_URL }}
-          TWINE_USERNAME: __token__
-          TWINE_PASSWORD: ${{ secrets.PRIVATE_PYPI_TOKEN }}
-        run: twine upload dist/*
+      - name: Publish to private registry (Gitea)
+        run: |
+          uv publish \
+            --publish-url "${{ secrets.PRIVATE_PYPI_URL }}" \
+            --username "__token__" \
+            --password "${{ secrets.PRIVATE_PYPI_TOKEN }}"
 
   publish-public:
     name: Publish to PyPI
@@ -91,5 +84,8 @@ jobs:
           name: pymcu-plugin-sdk-dist
           path: dist/
 
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v6
+
       - name: Publish to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
+        run: uv publish --trusted-publishing always
