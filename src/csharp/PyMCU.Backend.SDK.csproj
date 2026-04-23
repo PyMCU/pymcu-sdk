@@ -7,9 +7,9 @@
     <Nullable>enable</Nullable>
     <RootNamespace>PyMCU</RootNamespace>
     <AssemblyName>PyMCU.Backend.SDK</AssemblyName>
-    <Version>1.0.0-beta1</Version>
+    <Version>1.0.0-alpha.2</Version>
     <!-- MIT: paid backend authors reference this without inheriting AGPL. -->
-    <!-- SPDX-License-Identifier: MIT -->
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <InvariantGlobalization>true</InvariantGlobalization>
     <!-- AOT-compatible JSON serialization requires source generation. -->
     <IsAotCompatible>true</IsAotCompatible>
