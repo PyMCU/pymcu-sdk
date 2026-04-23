@@ -69,10 +69,10 @@ jobs:
           path: artifacts/
 
       - name: Connect to headscale network
-        uses: tailscale/github-action@v3
+        uses: tailscale/github-action@v4
         with:
           authkey: ${{ secrets.HEADSCALE_AUTH_KEY }}
-          login-server: ${{ secrets.HEADSCALE_URL }}
+          args: --login-server ${{ secrets.HEADSCALE_URL }}
 
       - name: Set up .NET
         uses: actions/setup-dotnet@v4
