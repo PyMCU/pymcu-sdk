@@ -14,6 +14,8 @@ Import from this package to access the stable base classes and plugin protocol::
         CacheableTool,
         ExternalToolchain,
         HardwareProgrammer,
+        PyPIToolchain,
+        ToolchainNotInstalledError,
         ToolchainPlugin,
         _default_platform_key,
         _is_non_interactive,
@@ -30,11 +32,14 @@ from .base_tool import (
 from .toolchain import ExternalToolchain
 from .programmer import HardwareProgrammer
 from .plugin import ToolchainPlugin
+from .pypi_tool import PyPIToolchain, ToolchainNotInstalledError
 
 __all__ = [
     "CacheableTool",
     "ExternalToolchain",
     "HardwareProgrammer",
+    "PyPIToolchain",
+    "ToolchainNotInstalledError",
     "ToolchainPlugin",
     "_default_platform_key",
     "_is_non_interactive",

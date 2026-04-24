@@ -21,6 +21,7 @@ import sys
 import urllib.request
 import tarfile
 import zipfile
+from filelock import FileLock
 from rich.console import Console
 from rich.progress import (
     Progress,
@@ -72,23 +73,13 @@ def _is_non_interactive() -> bool:
 @contextlib.contextmanager
 def _tool_lock(lock_file: Path):
     """
-    POSIX advisory lock on *lock_file* to prevent concurrent installs
-    from corrupting the toolchain cache directory.  On Windows the
-    context manager is a no-op (file locking semantics differ but the
-    risk of parallel installs is lower on Windows).
+    Cross-platform advisory lock on *lock_file* to prevent concurrent installs
+    from corrupting the toolchain cache directory.  Backed by ``filelock``
+    which works on both POSIX and Windows.
     """
     lock_file.parent.mkdir(parents=True, exist_ok=True)
-    if sys.platform == "win32":
+    with FileLock(str(lock_file)):
         yield
-        return
-    import fcntl
-    fh = open(lock_file, "w")
-    try:
-        fcntl.flock(fh, fcntl.LOCK_EX)
-        yield
-    finally:
-        fcntl.flock(fh, fcntl.LOCK_UN)
-        fh.close()
 
 
 class CacheableTool(ABC):

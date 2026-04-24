@@ -42,12 +42,21 @@ class ToolchainPlugin(ABC):
     default_chip : str
         A representative chip identifier used by CLI commands that need a
         concrete instance without a project context (e.g. ``install``, ``list``).
-    """
+    pip_package : str | None
+        PyPI package name for this toolchain (e.g. ``"pymcu-avr-toolchain"``).
+        Used by the pymcu CLI to display actionable install instructions.
+        ``None`` means the toolchain is not distributed as a PyPI package.
+    pip_extras : list[str] | None
+        Optional PEP 508 extras for the PyPI package
+        (e.g. ``["gdb"]`` → ``"pymcu-avr-toolchain[gdb]"``).
+        ``None`` means no extras are specified.    """
 
     family: str
     description: str
     version: str
     default_chip: str = ""
+    pip_package: Optional[str] = None
+    pip_extras: Optional[list] = None
 
     @classmethod
     @abstractmethod
